@@ -1,3 +1,73 @@
 \chapter{Grundlage}
 
 \section{Grundbegriffe und Definitionen}
+
+In diesem Kapitel werden die zentralen Begriffe eingeführt, die für das Verständnis der im Rahmen dieser Arbeit entwickelten Monitoring-Lösung notwendig sind. Ziel ist es, ein gemeinsames Begriffsverständnis zu schaffen, auf dem die folgenden Kapitel zur Analyse, Konzeption und Implementierung aufbauen.
+
+\subsection{Netzwerk-Monitoring}
+
+Unter Netzwerk-Monitoring wird die kontinuierliche Überwachung des Zustands und der Leistungsfähigkeit von Netzwerkkomponenten, Diensten und Schnittstellen verstanden. Dazu gehören beispielsweise Server, Kommunikationsdienste oder Webanwendungen, die über das Netzwerk erreichbar sein müssen. Monitoring-Systeme sammeln hierzu fortlaufend Daten über Verfügbarkeit, Antwortzeiten und Fehlersituationen, um Störungen frühzeitig zu erkennen und gezielt Gegenmaßnahmen einleiten zu können \cite{monitoring:prometheus}. 
+
+Im Kontext dieser Arbeit bezieht sich das Netzwerk-Monitoring vor allem auf die Prüfung der Erreichbarkeit von definierten Netzwerkzielen anhand von Host- und Portangaben. Als Beispiele gelten eine Spring-Boot-Anwendung oder die zugehörigen Monitoring-Komponenten. Die ermittelten Prüfergebnisse werden als Metriken exponiert und durch eine Monitoring- und Visualisierungsplattform gesammelt und visualisiert.
+
+\subsection{Verfügbarkeit und Erreichbarkeit}
+
+Verfügbarkeit beschreibt, in welchem Anteil einer betrachteten Zeitspanne ein System oder Dienst den vorgesehenen Zweck erfüllen kann. In der Praxis wird Verfügbarkeit häufig in Prozentwerten angegeben (z.\,B.\ \enquote{99{,}9\,\% Verfügbarkeit} im Sinne eines Service Level Agreements). Für operative Monitoring-Lösungen ist jedoch weniger der abstrakte Prozentwert relevant, sondern die konkrete Erreichbarkeit zu einem bestimmten Zeitpunkt.
+
+In dieser Arbeit wird die Erreichbarkeit eines Dienstes vereinfacht als binärer Zustand modelliert. Ein Ziel gilt als \enquote{up}, wenn innerhalb einer vorgegebenen Zeitspanne eine Verbindung aufgebaut werden kann, und als \enquote{down}, wenn der Verbindungsaufbau fehlschlägt oder die Zeitspanne überschritten wird. Dieser Zustand wird im entwickelten System in einer eigenen Datenstruktur sowie als Metrik \texttt{network\_device\_up} abgebildet, wobei der Wert \texttt{1{,}0} einem erreichbaren und \texttt{0{,}0} einem nicht erreichbaren Ziel entspricht.
+
+\subsection{Latenz}
+
+Neben der reinen Erreichbarkeit spielt die Latenz eine wesentliche Rolle bei der Beurteilung der Dienstqualität. Unter Latenz wird die Zeitspanne zwischen dem Senden einer Anfrage und dem Empfangen der zugehörigen Antwort verstanden. Im Netzwerkumfeld wird die Latenz üblicherweise in Millisekunden angegeben und dient als Kennzahl für die Reaktionsfähigkeit eines Dienstes.
+
+Im Rahmen dieser Arbeit wird die Latenz für jeden Verbindungsversuch zu einem überwachten Ziel gemessen. Dazu wird die Zeitdifferenz zwischen Beginn und Ende des Verbindungsaufbaus berechnet. Das Ergebnis wird sowohl in der Datenstruktur \texttt{CheckResult} als auch in Form der Metrik \texttt{network\_device\_latency\_ms} abgelegt. Damit steht für jedes überwachte Ziel neben dem binären Erreichbarkeitsstatus auch eine quantitative Aussage über die aktuelle Antwortzeit zur Verfügung.
+
+\subsection{Metriken, Exporter und Scraping}
+
+Eine Metrik ist eine messbare Kennzahl, die einen bestimmten Aspekt des Zustands oder der Performance eines Systems beschreibt. Typische Beispiele im Monitoring-Kontext sind CPU-Auslastung, Arbeitsspeicherkonsum, Anzahl von Anfragen pro Sekunde oder die bereits erläuterte Latenz. Moderne Monitoring-Lösungen arbeiten meist metriksbasiert, das heißt, sie erfassen systematisch Metriken, speichern diese in einer Zeitreihendatenbank und stellen sie für Auswertung und Alerting bereit \cite{monitoring:prometheus}.
+
+Ein Exporter ist in diesem Zusammenhang eine Komponente, die Metriken in einem standardisierten Format bereitstellt, sodass sie von einem Monitoring-System wie Prometheus abgeholt werden können. Die Daten werden nicht aktiv an das Monitoring-System gesendet, sondern über einen HTTP-Endpunkt bereitgestellt.
+
+Prometheus folgt einem sogenannten Pull- bzw.\ Scraping-Modell: Das System ruft in festen Intervallen die konfigurierten Metrik-Endpunkte der überwachten Anwendungen ab und speichert die dort gelieferten Kennzahlen \cite{baeldung:springboot-prometheus}. In der hier entwickelten Lösung stellt die Spring-Boot-Anwendung über den Actuator-Endpunkt \texttt{/actuator/prometheus} einen Exporter bereit, der die Anwendungsmesswerte im Prometheus-Format exponiert \cite{grafana:springboot-prometheus}.
+
+\subsection{Alert und Alerting}
+
+Ein Alert ist eine automatisch generierte Meldung, die auftritt, wenn eine oder mehrere Bedingungen erfüllt sind, die zuvor als kritisch oder dringend definiert wurden. Alerting bezeichnet den gesamten Prozess von der Auswertung von Metriken über die Erkennung solcher Bedingungen bis hin zur Benachrichtigung von zuständigen Personen oder Systemen. Ziel ist es, relevante Abweichungen möglichst frühzeitig und zuverlässig zu melden, ohne gleichzeitig eine Flut irrelevanter Meldungen zu erzeugen.
+
+Im Prometheus-Ökosystem wird Alerting typischerweise über Alert-Regeln realisiert, die auf den gespeicherten Metriken operieren. Sobald eine Regel erfüllt ist, erzeugt Prometheus eine Alert-Nachricht und übergibt sie an den Alertmanager, der für die weitere Verarbeitung, Gruppierung und Weiterleitung zuständig ist \cite{monitoring:prometheus}. In der im Rahmen dieser Arbeit verwendeten Konfiguration sind unter anderem Regeln definiert, die ausgelöst werden, wenn ein überwachter Dienst nicht erreichbar ist (\enquote{NetworkDeviceDown}) oder die Latenz einen vordefinierten Grenzwert überschreitet (\enquote{HighNetworkLatency}).
+
+\subsection{Container und Container-Orchestrierung}
+
+Container sind leichtgewichtige, isolierte Laufzeitumgebungen, in denen Anwendungen samt ihrer Abhängigkeiten ausgeführt werden. Im Gegensatz zu klassischen virtuellen Maschinen teilen sich Container den Kernel des Host-Betriebssystems, was sie ressourceneffizient und schnell startbar macht. Ein Container-Image beschreibt dabei den unveränderlichen Ausgangszustand eines Containers, einschließlich Laufzeitumgebung und Anwendung.
+
+Container-Orchestrierung bezeichnet die koordinierte Verwaltung mehrerer Container, einschließlich Start, Stopp, Vernetzung und Konfigurationsverwaltung. Im Kontext dieser Arbeit kommt Docker als Container-Plattform zum Einsatz, sowie Docker Compose zur Orchestrierung der beteiligten Dienste. Die zentrale Monitoring-Anwendung, Prometheus, Grafana und der Alertmanager werden in jeweils eigenen Containern betrieben und über ein gemeinsames virtuelles Netzwerk verbunden. Die notwendigen Einstellungen sind in der Datei \texttt{docker-compose.yml} definiert.
+
+\subsection{Spring Boot, Actuator und Micrometer}
+
+Spring Boot ist ein Framework zur vereinfachten Entwicklung von Java-basierten Anwendungen. Es stellt umfangreiche Auto-Konfiguration und eine integrierte Projektstruktur bereit, wodurch typische Infrastrukturaufgaben reduziert werden. Für produktionsreife Anwendungen bietet Spring Boot mit dem Actuator-Modul eine Sammlung von Betriebsendpunkten, die Informationen über den Zustand und die Metriken der Anwendung zur Verfügung stellen \cite{spring-boot-actuator-doc}.
+
+Micrometer ist eine Bibliothek zur Erfassung und Bereitstellung von Metriken in Java-Anwendungen. Sie fungiert als Abstraktionsschicht, die die Anwendung von der konkreten Wahl des Monitoring-Backends entkoppelt und unterstützt unter anderem Prometheus, Graphite und andere Systeme \cite{spring-boot-actuator-doc}. In der hier verwendeten Projektkonfiguration wird Micrometer zusammen mit dem Prometheus-Registry-Modul eingebunden, sodass die Anwendung automatisch einen Prometheus-kompatiblen Metrik-Endpunkt bereitstellt. Die Grundkonfiguration erfolgt über die Anwendungskonfigurationsdatei, in der die Exposition von Actuator-Endpunkten wie \texttt{/actuator/prometheus} gesteuert wird \cite{grafana:springboot-prometheus}.
+
+\subsection{TCP-basierte Erreichbarkeitsprüfung}
+
+Das Transmission Control Protocol (TCP) ist ein verbindungsorientiertes Transportprotokoll, das eine zuverlässige Datenübertragung zwischen zwei Endpunkten bereitstellt. Bevor Daten übertragen werden können, wird eine Verbindung zwischen Client und Server aufgebaut. Gelingt dieser Verbindungsaufbau, ist der entsprechende Dienst an der angegebenen Adresse erreichbar; schlägt er fehl, ist entweder der Dienst nicht verfügbar oder es liegt eine Netzwerkstörung vor.
+
+Die im Rahmen dieser Arbeit implementierte Erreichbarkeitsprüfung basiert auf dem Versuch, eine TCP-Verbindung zu einem definierten Host und Port innerhalb eines vorgegebenen Zeitlimits aufzubauen. Technisch wird dazu ein Socket verwendet, der versucht, die Verbindung zu initiieren. Wird der Verbindungsaufbau innerhalb des Timeouts erfolgreich abgeschlossen, wird das Ziel als erreichbar (\enquote{up}) eingestuft; bei Ausnahmefällen oder Zeitüberschreitungen wird das Ziel als nicht erreichbar (\enquote{down}) markiert. Die dabei gemessene Dauer des Verbindungsversuchs dient gleichzeitig als Grundlage für die Latenzmetrik.
+
+\section{Technologische Grundlagen}
+\subsection{Architektur des Spring-Boot-basierten Monitoring-Dienstes}
+\subsection{Micrometer und Prometheus-Integration}
+\subsection{Visualisierung mit Grafana}
+\subsection{Alerting mit Alertmanager}
+\subsection{Containerisierte Bereitstellung mit Docker und Docker Compose}
+\subsection{Netzwerkkonnektivitätsprüfung mittels TCP-Sockets}
+
+\section{Verwendete Methoden und Konzepte des entwickelten Systems}
+\subsection{Konfigurationsgetriebenes Gerätemanagement}
+\subsection{Zeitgesteuertes Polling von Netzwerkzielen}
+\subsection{Zustandsbasierte Metriken und Kennzahlenmodell}
+\subsection{Schichtenarchitektur und Verantwortlichkeiten}
+\subsection{Fehlerbehandlung und Robustheit}
+\subsection{Testgetriebene Absicherung der Kernlogik}
+
+\section{Stand der Technik und Einordnung}
