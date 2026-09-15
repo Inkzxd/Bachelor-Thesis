@@ -1,0 +1,124 @@
+<mxfile host="app.diagrams.net" agent="Perplexity">
+  <diagram id="package-architecture" name="Java Package Architecture">
+    <mxGraphModel dx="1178" dy="1757" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="app" parent="1" style="swimlane;html=1;rounded=1;horizontal=0;startSize=35;fillColor=#e3f2fd;strokeColor=#1565c0;strokeWidth=2;fontStyle=1;fontSize=15;" value="de.htwsaar.monitoring" vertex="1">
+          <mxGeometry height="880" width="1480" x="110" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="main" parent="app" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1976d2;strokeWidth=2;fontSize=15;" value="&lt;font style=&quot;font-size: 17px;&quot;&gt;Main.java&lt;/font&gt;&lt;br&gt;&lt;font&gt;Application entry point&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="240" x="620" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="config" parent="app" style="swimlane;html=1;rounded=1;horizontal=0;startSize=30;fillColor=#fff3e0;strokeColor=#ef6c00;strokeWidth=2;fontStyle=1;fontSize=15;" value="config" vertex="1">
+          <mxGeometry height="205" width="320" x="60" y="152.5" as="geometry" />
+        </mxCell>
+        <mxCell id="global" parent="config" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ef6c00;fontSize=15;" value="GlobalExceptionHandler" vertex="1">
+          <mxGeometry height="35" width="270" x="40" y="44.5" as="geometry" />
+        </mxCell>
+        <mxCell id="properties" parent="config" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ef6c00;fontSize=15;" value="MonitoringProperties" vertex="1">
+          <mxGeometry height="35" width="270" x="40" y="89.5" as="geometry" />
+        </mxCell>
+        <mxCell id="security" parent="config" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ef6c00;fontSize=15;" value="SecurityConfig" vertex="1">
+          <mxGeometry height="35" width="270" x="40" y="134.5" as="geometry" />
+        </mxCell>
+        <mxCell id="controller" parent="app" style="swimlane;html=1;rounded=1;horizontal=0;startSize=30;fillColor=#e8f5e9;strokeColor=#2e7d32;strokeWidth=2;fontStyle=1;fontSize=15;" value="controller" vertex="1">
+          <mxGeometry height="260" width="330" x="1130" y="125" as="geometry" />
+        </mxCell>
+        <mxCell id="device-controller" parent="controller" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#2e7d32;fontSize=15;" value="DeviceController" vertex="1">
+          <mxGeometry height="35" width="280" x="40" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="history-controller" parent="controller" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#2e7d32;fontSize=15;" value="CheckHistoryController" vertex="1">
+          <mxGeometry height="35" width="280" x="40" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="monitoring-controller" parent="controller" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#2e7d32;fontSize=15;" value="MonitoringController" vertex="1">
+          <mxGeometry height="35" width="280" x="40" y="135" as="geometry" />
+        </mxCell>
+        <mxCell id="ping-controller" parent="controller" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#2e7d32;fontSize=15;" value="PingController" vertex="1">
+          <mxGeometry height="35" width="280" x="40" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="model" parent="app" style="swimlane;html=1;rounded=1;horizontal=0;startSize=30;fillColor=#f3e5f5;strokeColor=#6a1b9a;strokeWidth=2;fontStyle=1;fontSize=15;" value="model" vertex="1">
+          <mxGeometry height="260" width="330" x="1130" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="device" parent="model" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6a1b9a;fontSize=15;" value="Device" vertex="1">
+          <mxGeometry height="35" width="280" x="40" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="check-result" parent="model" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6a1b9a;fontSize=15;" value="CheckResult" vertex="1">
+          <mxGeometry height="35" width="280" x="40" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="check-entity" parent="model" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6a1b9a;fontSize=15;" value="CheckResultEntity" vertex="1">
+          <mxGeometry height="35" width="280" x="40" y="135" as="geometry" />
+        </mxCell>
+        <mxCell id="check-repository" parent="model" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6a1b9a;fontSize=15;" value="CheckResultRepository" vertex="1">
+          <mxGeometry height="35" width="280" x="40" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="scheduler" parent="app" style="swimlane;html=1;rounded=1;horizontal=0;startSize=30;fillColor=#e0f7fa;strokeColor=#00838f;strokeWidth=2;fontStyle=1;fontSize=15;" value="scheduler" vertex="1">
+          <mxGeometry height="130" width="430" x="50" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="monitoring-scheduler" parent="scheduler" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#00838f;fontSize=15;" value="MonitoringScheduler&lt;br&gt;&lt;font&gt;Triggers periodic checks&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="380" x="40" y="37.5" as="geometry" />
+        </mxCell>
+        <mxCell id="alert" parent="app" style="swimlane;html=1;rounded=1;horizontal=0;startSize=30;fillColor=#ffebee;strokeColor=#c62828;strokeWidth=2;fontStyle=1;fontSize=15;" value="alert" vertex="1">
+          <mxGeometry height="180" width="430" x="50" y="630" as="geometry" />
+        </mxCell>
+        <mxCell id="alert-controller" parent="alert" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c62828;fontSize=15;" value="AlertWebhookController" vertex="1">
+          <mxGeometry height="40" width="380" x="40" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="alert-payload" parent="alert" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#c62828;fontSize=15;" value="AlertmanagerWebhookPayload" vertex="1">
+          <mxGeometry height="40" width="380" x="40" y="95" as="geometry" />
+        </mxCell>
+        <mxCell id="incident" parent="app" style="swimlane;html=1;rounded=1;horizontal=0;startSize=30;fillColor=#fce4ec;strokeColor=#ad1457;strokeWidth=2;fontStyle=1;fontSize=15;" value="incident" vertex="1">
+          <mxGeometry height="300" width="390" x="630" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="incident-model" parent="incident" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ad1457;fontSize=15;" value="Incident&lt;br&gt;&lt;font&gt;Persistent incident entity&lt;/font&gt;" vertex="1">
+          <mxGeometry height="50" width="340" x="40" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="incident-controller" parent="incident" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ad1457;fontSize=15;" value="IncidentController" vertex="1">
+          <mxGeometry height="35" width="340" x="40" y="105" as="geometry" />
+        </mxCell>
+        <mxCell id="incident-repository" parent="incident" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ad1457;fontSize=15;" value="IncidentRepository" vertex="1">
+          <mxGeometry height="35" width="340" x="40" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="incident-service" parent="incident" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ad1457;fontSize=15;" value="IncidentService" vertex="1">
+          <mxGeometry height="35" width="340" x="40" y="195" as="geometry" />
+        </mxCell>
+        <mxCell id="incident-status" parent="incident" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#ad1457;fontSize=15;" value="IncidentStatus&lt;br&gt;&lt;font&gt;FIRING / RESOLVED&lt;/font&gt;" vertex="1">
+          <mxGeometry height="40" width="340" x="40" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="service" parent="app" style="swimlane;html=1;rounded=1;horizontal=0;startSize=30;fillColor=#fffde7;strokeColor=#f9a825;strokeWidth=2;fontStyle=1;fontSize=15;" value="service" vertex="1">
+          <mxGeometry height="170" width="270" x="605" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="device-service" parent="service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#f9a825;fontSize=15;" value="DeviceCheckService" vertex="1">
+          <mxGeometry height="35" width="230" x="35" y="45" as="geometry" />
+        </mxCell>
+        <mxCell id="ping-service" parent="service" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#f9a825;fontSize=15;" value="PingCheckService" vertex="1">
+          <mxGeometry height="35" width="230" x="35" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="e-main" edge="1" parent="app" source="main" style="endArrow=classic;html=1;strokeColor=#1565c0;labelBackgroundColor=#ffffff;fontSize=15;" target="service" value="starts">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-controller-service" edge="1" parent="app" source="controller" style="endArrow=classic;html=1;strokeColor=#2e7d32;labelBackgroundColor=#ffffff;fontSize=15;" target="service" value="invokes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-scheduler-service" edge="1" parent="app" source="scheduler" style="endArrow=classic;html=1;strokeColor=#00838f;labelBackgroundColor=#ffffff;fontSize=15;" target="service" value="triggers checks">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-service-model" edge="1" parent="app" source="service" style="endArrow=classic;html=1;strokeColor=#f9a825;labelBackgroundColor=#ffffff;fontSize=15;" target="model" value="creates results">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-config" edge="1" parent="app" source="config" style="endArrow=classic;html=1;strokeColor=#ef6c00;labelBackgroundColor=#ffffff;fontSize=15;" target="service" value="configures">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-controller-model" edge="1" parent="1" source="controller" style="endArrow=classic;html=1;strokeColor=#6a1b9a;labelBackgroundColor=#ffffff;fontSize=15;" target="model" value="uses">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-alert-incident" edge="1" parent="1" source="alert" style="endArrow=classic;html=1;strokeColor=#c62828;labelBackgroundColor=#ffffff;fontSize=15;" target="incident" value="processes webhook">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-incident-model" edge="1" parent="1" source="incident" style="endArrow=classic;html=1;strokeColor=#ad1457;labelBackgroundColor=#ffffff;fontSize=15;" target="model" value="persists">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

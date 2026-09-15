@@ -1,0 +1,96 @@
+<mxfile host="app.diagrams.net" agent="Perplexity">
+  <diagram id="incident-lifecycle-english" name="Incident Lifecycle">
+    <mxGraphModel dx="2044" dy="1141" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="note-created" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#fbc02d;fontSize=13;" value="An incident is created when a new firing alert is received and no active incident with the same fingerprint exists." vertex="1">
+          <mxGeometry height="100" width="210" x="680" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="alert-received" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196f3;strokeColor=#1976d2;strokeWidth=2;fontColor=#ffffff;fontSize=15;" value="Alert Received&lt;br&gt;&lt;font style=&quot;font-size:12px;&quot;&gt;Status: Firing&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="260" x="360" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="check-fingerprint" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#424242;fontSize=14;" value="Check Fingerprint" vertex="1">
+          <mxGeometry height="50" width="180" x="400" y="235" as="geometry" />
+        </mxCell>
+        <mxCell id="decision" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffeb3b;strokeColor=#f57f17;strokeWidth=2;fontSize=14;" value="Active Incident with the&lt;br&gt;Same Fingerprint Exists?" vertex="1">
+          <mxGeometry height="115" width="200" x="390" y="325" as="geometry" />
+        </mxCell>
+        <mxCell id="create-incident" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#424242;fontSize=14;" value="Create Incident" vertex="1">
+          <mxGeometry height="55" width="190" x="105" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="ldDZqE05AR1c5Unh2nil-1" edge="1" parent="1" source="persist-incident" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="firing">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="persist-incident" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#b26a00;strokeWidth=2;fontSize=14;" value="Store Incident&lt;br&gt;in Database" vertex="1">
+          <mxGeometry height="80" width="220" x="90" y="585" as="geometry" />
+        </mxCell>
+        <mxCell id="firing" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f44336;strokeColor=#c62828;strokeWidth=2;fontColor=#ffffff;fontSize=16;" value="FIRING&lt;br&gt;&lt;font style=&quot;font-size:12px;&quot;&gt;Active Incident&lt;/font&gt;" vertex="1">
+          <mxGeometry height="95" width="240" x="370" y="665" as="geometry" />
+        </mxCell>
+        <mxCell id="ldDZqE05AR1c5Unh2nil-2" edge="1" parent="1" source="duplicate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="firing">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="790" y="712.5" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ldDZqE05AR1c5Unh2nil-3" connectable="0" parent="ldDZqE05AR1c5Unh2nil-2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;" value="Status Remains FIRING" vertex="1">
+          <mxGeometry relative="1" x="-0.4959" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="duplicate" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#424242;fontSize=14;" value="Do Not Create&lt;br&gt;a New Incident" vertex="1">
+          <mxGeometry height="55" width="200" x="690" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="note-firing" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#ffebee;strokeColor=#ef5350;fontSize=13;" value="Repeated firing alerts with the same fingerprint do not create additional incidents. The incident remains in the FIRING state." vertex="1">
+          <mxGeometry height="100" width="230" x="820" y="648" as="geometry" />
+        </mxCell>
+        <mxCell id="resolved-alert" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#424242;fontSize=14;" value="Resolved Alert&lt;br&gt;Received" vertex="1">
+          <mxGeometry height="55" width="190" x="395" y="835" as="geometry" />
+        </mxCell>
+        <mxCell id="store-resolved" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#424242;fontSize=14;" value="Store Resolution&lt;br&gt;Timestamp" vertex="1">
+          <mxGeometry height="55" width="190" x="395" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="resolved" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4caf50;strokeColor=#388e3c;strokeWidth=2;fontColor=#ffffff;fontSize=16;" value="RESOLVED&lt;br&gt;&lt;font style=&quot;font-size:12px;&quot;&gt;Incident Resolved&lt;/font&gt;" vertex="1">
+          <mxGeometry height="85" width="240" x="370" y="1090" as="geometry" />
+        </mxCell>
+        <mxCell id="note-resolved" parent="1" style="shape=note;whiteSpace=wrap;html=1;fillColor=#e8f5e9;strokeColor=#66bb6a;fontSize=13;" value="When a resolved alert is received, the active incident is set to RESOLVED and the resolution timestamp is stored." vertex="1">
+          <mxGeometry height="105" width="230" x="620" y="870" as="geometry" />
+        </mxCell>
+        <mxCell id="optional-archive" parent="1" style="rounded=1;dashed=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#757575;strokeWidth=2;fontColor=#616161;fontSize=12;" value="Optional Extension:&lt;br&gt;Archive or Delete After&lt;br&gt;the Retention Period" vertex="1">
+          <mxGeometry height="70" width="230" x="750" y="1097.5" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="alert-received" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="check-fingerprint" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="check-fingerprint" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="decision" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="decision" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;endFill=1;exitX=0;exitY=0.5;entryX=0.5;entryY=0;labelBackgroundColor=#ffffff;fontSize=12;" target="create-incident" value="No">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="create-incident" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="persist-incident" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="decision" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;endFill=1;exitX=1;exitY=0.5;entryX=0.5;entryY=0;labelBackgroundColor=#ffffff;fontSize=12;" target="duplicate" value="Yes">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="firing" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;labelBackgroundColor=#ffffff;fontSize=12;" target="resolved-alert" value="Resolved">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="resolved-alert" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="store-resolved" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="store-resolved" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;endFill=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;labelBackgroundColor=#ffffff;fontSize=14;verticalAlign=middle;align=center;" target="resolved" value="Set Status to RESOLVED">
+          <mxGeometry relative="1" x="0.0588" y="-10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="resolved" style="edgeStyle=orthogonalEdgeStyle;rounded=0;dashed=1;html=1;endArrow=classic;endFill=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#ffffff;fontSize=11;fontColor=#616161;" target="optional-archive" value="Future Extension">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

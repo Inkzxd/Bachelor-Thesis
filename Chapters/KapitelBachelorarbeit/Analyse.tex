@@ -1,2 +1,187 @@
-% Analyse
+%********************************************************************
+% Kapitel 3: Analyse
+%********************************************************************
 \chapter{Analyse}
+\label{ch:analyse}
+
+Dieses Kapitel analysiert den Problemraum, ermittelt die Anforderungen an das zu entwickelnde Monitoring-System und untersucht den Stand der Technik sowie verwandte Arbeiten aus Forschung und Praxis. Aufbauend auf der Einleitung und den Grundlagen wird zunächst der aktuelle Zustand in typischen IT-Service-Umgebungen beschrieben, anschließend werden die Anforderungen systematisch abgeleitet und schließlich bestehende Monitoring-Lösungen hinsichtlich ihrer Abdeckung der ermittelten Anforderungen analysiert. Die identifizierten Lücken zwischen Anforderungen und bestehenden Lösungen begründen die Notwendigkeit der entwickelten Lösung.
+
+\section{Analyse des Problemraums}
+\label{sec:problemraumanalyse}
+
+In vielen IT-Service-Abteilungen, insbesondere im Umfeld von Bildungseinrichtungen und mittelgroßen Organisationen, wird die Überwachung von Netzwerkverbindungen und Diensten weiterhin stark manuell betrieben. Typische Vorgehensweisen umfassen sporadische Ping-Tests, manuelle Überprüfungen von VPN-Endpunkten oder reaktive Fehleranalysen erst nach eingegangenen Benutzerbeschwerden.
+
+Diese Vorgehensweise weist mehrere charakteristische Schwachstellen auf:
+
+\begin{itemize}
+    \item \textbf{Verzögerte Erkennung:} Störungen werden oft erst mit erheblicher Verzögerung bemerkt, da keine kontinuierliche automatisierte Überwachung stattfindet.
+    \item \textbf{Hoher manueller Aufwand:} Regelmäßige manuelle Tests binden personelle Ressourcen und sind nur stichprobenartig durchführbar.
+    \item \textbf{Fehlende Historie:} Ohne systematische Speicherung von Messwerten können vergangene Zustände nicht zuverlässig rekonstruiert werden.
+    \item \textbf{Keine automatisierte Alarmierung:} Bei Ausfällen erfolgt keine unmittelbare Benachrichtigung verantwortlicher Personen.
+    \item \textbf{Eingeschränkte Nachvollziehbarkeit:} Zusammenhänge zwischen verschiedenen Fehlerbildern lassen sich im Nachhinein nur schwer analysieren.
+\end{itemize}
+
+Diese Probleme treten insbesondere dann verstärkt auf, wenn mehrere Systeme voneinander abhängen und Störungen kettenartig auf andere Dienste wirken. Für einen professionellen IT-Betrieb ist jedoch nicht nur die unmittelbare Störungserkennung relevant, sondern auch die Möglichkeit, Entwicklungen über einen längeren Zeitraum nachzuvollziehen, Grenzwerte zu definieren und daraus gezielte Maßnahmen abzuleiten.
+
+\section{Anforderungsermittlung}
+\label{sec:anforderungsermittlung}
+
+Aus der Problemstellung und den Zielen der Arbeit ergeben sich funktionale und nichtfunktionale Anforderungen an das zu entwickelnde Monitoring-System. Die Anforderungen wurden durch eine Kombination aus Problemraumanalyse, Zieldefinition und Abgleich mit bestehenden Lösungen ermittelt.
+
+\subsection{Funktionale Anforderungen}
+\label{subsec:funktionale-anforderungen}
+
+Die zentralen funktionalen Anforderungen lassen sich wie folgt zusammenfassen:
+
+\begin{itemize}
+    \item \textbf{F1 Konfigurierbare Überwachungsziele:} Das System muss in der Lage sein, eine Liste von Netzwerkzielen zu verwalten. Jedes Ziel umfasst mindestens einen Namen, einen Hostnamen oder eine IP-Adresse, einen TCP-Port und einen Aktivierungsstatus.
+    \item \textbf{F2 Regelmäßige Erreichbarkeitsprüfung:} Alle aktivierten Ziele müssen in konfigurierbaren Zeitintervallen automatisch geprüft werden.
+    \item \textbf{F3 Ermittlung von Status und Latenz:} Für jedes Ziel muss der Erreichbarkeitsstatus sowie die Dauer des Verbindungsversuchs ermittelt werden.
+    \item \textbf{F4 Bereitstellung als Metriken:} Die Ergebnisse müssen in einem standardisierten Format bereitgestellt werden, das von Prometheus konsumiert werden kann.
+    \item \textbf{F5 Zeitreihenspeicherung:} Die Metriken müssen von Prometheus als Zeitreihen gespeichert werden, um aktuelle und historische Werte auswerten zu können.
+    \item \textbf{F6 Visualisierung:} Ein Dashboard muss Erreichbarkeit, Latenz sowie ausgewählte Anwendungsmetriken darstellen können.
+    \item \textbf{F7 Alert-Erkennung:} Das System muss in der Lage sein, definierte Fehlerzustände automatisch zu erkennen und als Alert zu melden.
+    \item \textbf{F8 Incident-Historie:} Alerts müssen in einer Incident-Historie gespeichert werden, um vergangene Störungen nachvollziehbar zu machen.
+    \item \textbf{F9 REST-Schnittstelle:} Das System muss Endpunkte bereitstellen, um konfigurierte Geräte, aktuelle Prüfergebnisse, Incident-Historie und den Dienststatus abzufragen.
+    \item \textbf{F10 Manuelle Auslösung:} Ein Prüfzyklus muss auch manuell ausgelöst werden können, um Tests und Demonstrationen zu unterstützen.
+\end{itemize}
+
+\subsection{Nichtfunktionale Anforderungen}
+\label{subsec:nichtfunktionale-anforderungen}
+
+Neben den fachlichen Funktionen gelten folgende Qualitätsanforderungen:
+
+\begin{itemize}
+    \item \textbf{N1 Konfigurierbarkeit:} Überwachungsziele, Prüfintervalle und Timeouts sollen ohne Änderungen an der Java-Fachlogik angepasst werden können.
+    \item \textbf{N2 Robustheit:} Der Ausfall eines einzelnen Ziels darf nicht zum Abbruch des gesamten Prüfzyklus führen.
+    \item \textbf{N3 Reproduzierbarkeit:} Die Komponenten sollen mit Docker Compose einheitlich gestartet und konfiguriert werden können.
+    \item \textbf{N4 Erweiterbarkeit:} Neue Prüfarten und zusätzliche Metriken sollen in die bestehende Struktur integriert werden können.
+    \item \textbf{N5 Nachvollziehbarkeit:} Zustände und Messwerte sollen über Zeitreihen und Dashboard-Ansichten analysierbar sein.
+    \item \textbf{N6 Ressourceneffizienz:} Prüfintervall und Timeout sollen so gewählt beziehungsweise konfiguriert werden können, dass Aktualität und Systemlast in einem angemessenen Verhältnis stehen.
+    \item \textbf{N7 Sicherheit:} Administrative Endpunkte müssen durch Authentifizierung und Autorisierung geschützt sein.
+    \item \textbf{N8 Leichtgewichtigkeit:} Die Lösung soll bewusst schlank gehalten sein und sich auf die Kernfunktionen konzentrieren.
+\end{itemize}
+
+\section{Stand der Technik und verwandte Arbeiten}
+\label{sec:stand-der-technik}
+
+Im Bereich Netzwerk-Monitoring existieren zahlreiche etablierte Werkzeuge und Plattformen. Die folgende Analyse betrachtet ausgewählte Lösungen aus Forschung und Praxis und ordnet diese im Kontext der ermittelten Anforderungen ein.
+
+\subsection{Prometheus}
+\label{subsec:prometheus}
+
+Prometheus ist ein Open-Source-Monitoring-System, das Metriken von konfigurierten Zielen abruft und als Zeitreihen speichert. Die Konfiguration definiert unter anderem Abrufintervalle, Zielsysteme, Metrikpfade und Alert-Regeln. Auf Grundlage der gespeicherten Zeitreihen können Abfragen durchgeführt, Visualisierungen erstellt und kritische Zustände erkannt werden \cite{monitoringprometheus}.
+
+Prometheus verwendet ein Pull- beziehungsweise Scraping-Modell. Der Prometheus-Server ruft die Metrik-Endpunkte der konfigurierten Ziele in festgelegten Intervallen ab. Prometheus deckt die Anforderungen F4, F5 und F7 ab, bietet jedoch keine integrierte Incident-Historie (F8) und keine REST-Schnittstelle für operative Abfragen (F9).
+
+\subsection{Prometheus Blackbox Exporter}
+\label{subsec:blackbox-exporter}
+
+Der Prometheus Blackbox Exporter ermöglicht die Überwachung von Endpunkten über Protokolle wie HTTP, HTTPS, DNS, TCP und ICMP. Er führt aktive Prüfungen durch und stellt die Ergebnisse als Metriken bereit.
+
+Der Blackbox Exporter deckt die Anforderungen F1, F2, F3 und F4 ab. Allerdings fehlen auch hier eine Incident-Historie (F8) und eine REST-Schnittstelle (F9). Die Konfiguration erfolgt über YAML-Dateien, was N1 teilweise erfüllt, jedoch keine dynamische Verwaltung ermöglicht.
+
+\subsection{Grafana}
+\label{subsec:grafana}
+
+Grafana dient der Visualisierung von Zeitreihendaten aus verschiedenen Quellen, darunter Prometheus. Grafana ermöglicht die Darstellung von Zeitreihen, Tabellen und Statusanzeigen, wodurch beispielsweise Verfügbarkeit und Latenz einzelner Netzwerkziele nachvollziehbar werden \cite{grafanaprometheus-datasource}.
+
+Grafana deckt die Anforderung F6 ab, ist jedoch auf externe Datenquellen angewiesen und bietet keine eigene Datenerfassung oder Incident-Historie.
+
+\subsection{Alertmanager}
+\label{subsec:alertmanager}
+
+Alertmanager verarbeitet Alerts, die von Prometheus aufgrund definierter Regeln erzeugt werden. Zu seinen zentralen Aufgaben zählen die Deduplizierung, Gruppierung und Weiterleitung von Meldungen an konfigurierte Empfänger \cite{prometheusalertmanager}.
+
+Alertmanager deckt Teile von F7 ab, bietet jedoch keine persistente Incident-Historie (F8) und keine REST-Schnittstelle für externe Abfragen (F9).
+
+\subsection{Kommerzielle und Open-Source-Monitoring-Plattformen}
+\label{subsec:kommerzielle-loesungen}
+
+Neben Prometheus existieren weitere etablierte Monitoring-Lösungen wie Nagios, Zabbix oder Icinga. Diese Werkzeuge bieten umfassende Funktionen für Infrastruktur-Monitoring, Alerting und Reporting.
+
+\textbf{Nagios} ist eine weit verbreitete Open-Source-Monitoring-Lösung, die umfangreiche Prüfungen und Benachrichtigungen unterstützt. Allerdings ist die Konfiguration komplex und die Architektur monolithisch. Nagios bietet keine native Integration mit Prometheus und keine moderne REST-API.
+
+\textbf{Zabbix} ist eine Enterprise-Monitoring-Plattform mit umfassenden Funktionen für Netzwerk-, Server- und Anwendungsmonitoring. Zabbix bietet eine Datenbank-basierte Historie und eine REST-API, ist jedoch in der Einrichtung und Wartung aufwendig und für leichtgewichtige Szenarien überdimensioniert.
+
+\textbf{Icinga} ist eine Weiterentwicklung von Nagios mit verbesserter Skalierbarkeit und einer moderneren Architektur. Auch Icinga bietet umfangreiche Funktionen, ist jedoch ebenfalls komplex in der Konfiguration und erfordert erheblichen Wartungsaufwand.
+
+Diese Lösungen decken viele der funktionalen Anforderungen ab (F1--F7), sind jedoch oft zu komplex für leichtgewichtige Szenarien (N8) und bieten keine einfache containerisierte Bereitstellung (N3).
+
+\subsection{Forschungsarbeiten}
+\label{subsec:forschungsarbeiten}
+
+Im Bereich Monitoring und Observability existieren zahlreiche Forschungsarbeiten, die sich mit Themen wie automatischer Fehlererkennung, Metrikanalyse und Alert-Optimierung beschäftigen. Für die vorliegende Arbeit sind insbesondere Arbeiten relevant, die sich mit leichtgewichtigen Monitoring-Architekturen und Incident-Management befassen.
+
+Da der Fokus dieser Arbeit auf einer praxisnahen Implementierung liegt, werden Forschungsarbeiten nicht im Detail analysiert. Die entwickelten Konzepte orientieren sich jedoch an etablierten Praktiken aus Forschung und Industrie, insbesondere im Bereich Metrik-basiertes Monitoring und Incident-Management.
+
+\subsection{Abdeckungsanalyse und identifizierte Lücken}
+\label{subsec:abdeckungsanalyse}
+
+Tabelle~\ref{tab:anforderungsabdeckung} zeigt eine vergleichende Analyse der ermittelten Anforderungen im Kontext bestehender Lösungen.
+
+\begin{table}[h]
+\centering
+\caption{Vergleichende Anforderungsabdeckung bestehender Monitoring-Lösungen}
+\label{tab:anforderungsabdeckung}
+\begin{tabular}{lccccc}
+\hline
+\textbf{Anforderung} & \textbf{Prometheus} & \textbf{Blackbox} & \textbf{Nagios/Zabbix} & \textbf{Eigene Lösung} \\
+\hline
+F1 Konfigurierbare Ziele & Ja & Ja & Ja & Ja \\
+F2 Regelmäßige Prüfung & Ja & Ja & Ja & Ja \\
+F3 Status und Latenz & Ja & Ja & Ja & Ja \\
+F4 Metrik-Export & Ja & Ja & Nein & Ja \\
+F5 Zeitreihenspeicherung & Ja & Nein & Ja & Ja \\
+F6 Visualisierung & Nein$^{1}$ & Nein & Ja$^{2}$ & Ja$^{3}$ \\
+F7 Alert-Erkennung & Ja & Nein & Ja & Ja \\
+F8 Incident-Historie & Nein & Nein & Nein$^{4}$ & Ja \\
+F9 REST-Schnittstelle & Nein & Nein & Nein$^{5}$ & Ja \\
+F10 Manuelle Auslösung & Nein & Nein & Nein & Ja \\
+\hline
+N1 Konfigurierbarkeit & Ja & Ja & Nein & Ja \\
+N2 Robustheit & Ja & Ja & Ja & Ja \\
+N3 Reproduzierbarkeit & Nein$^{6}$ & Nein$^{6}$ & Nein & Ja \\
+N4 Erweiterbarkeit & Ja & Ja & Nein & Ja \\
+N5 Nachvollziehbarkeit & Ja & Ja & Ja & Ja \\
+N6 Ressourceneffizienz & Ja & Ja & Nein & Ja \\
+N7 Sicherheit & Ja$^{7}$ & Ja$^{7}$ & Ja & Ja \\
+N8 Leichtgewichtigkeit & Ja & Ja & Nein & Ja \\
+\hline
+\end{tabular}
+\begin{flushleft}
+\footnotesize
+$^{1}$ Benötigt Grafana als separate Komponente \\
+$^{2}$ Benötigt zusätzliche Plugins \\
+$^{3}$ Über Grafana und eigenes Web-Dashboard \\
+$^{4}$ Nur über externe Plugins oder Custom-Lösungen \\
+$^{5}$ Nur über externe APIs oder Plugins \\
+$^{6}$ Docker-Support vorhanden, aber keine integrierte Compose-Bereitstellung \\
+$^{7}$ Erfordert zusätzliche Konfiguration
+\end{flushleft}
+\end{table}
+
+Die Analyse zeigt folgende identifizierte Lücken:
+
+\begin{itemize}
+    \item \textbf{Lücke 1: Fehlende Incident-Historie:} Weder Prometheus noch Blackbox Exporter noch typische Nagios/Zabbix-Installationen bieten eine integrierte, leicht zugängliche Incident-Historie. Dies erschwert die langfristige Nachverfolgung von Störungen.
+    
+    \item \textbf{Lücke 2: Fehlende integrierte REST-Schnittstelle:} Bestehende Lösungen bieten keine umfassende REST-Schnittstelle für operative Abfragen von Geräten, Prüfergebnissen und Incidents.
+    
+    \item \textbf{Lücke 3: Komplexe Bereitstellung:} Viele bestehende Lösungen sind nicht als integrierte, containerisierte Anwendung bereitstellbar, was die Reproduzierbarkeit und Wartung erschwert.
+    
+    \item \textbf{Lücke 4: Überdimensionierung:} Umfassende Monitoring-Plattformen wie Nagios oder Zabbix sind für leichtgewichtige Szenarien oft überdimensioniert und erfordern erheblichen Konfigurationsaufwand.
+    
+    \item \textbf{Lücke 5: Fehlende manuelle Auslösung:} Die Möglichkeit, Prüfzyklen manuell auszulösen, ist in bestehenden Lösungen nicht standardmäßig vorhanden.
+\end{itemize}
+
+Diese Lücken begründen die Notwendigkeit der entwickelten Lösung. Die eigene Implementierung schließt diese Lücken durch eine integrierte Incident-Historie, eine umfassende REST-Schnittstelle, eine containerisierte Bereitstellung und eine bewusst leichtgewichtige Architektur.
+
+\section{Zusammenfassung}
+\label{sec:zusammenfassung-analyse}
+
+Die Analyse des Problemraums hat gezeigt, dass manuelle und unregelmäßige Netzwerkprüfungen in vielen IT-Service-Umgebungen zu verzögerter Störungserkennung, hohem manuellem Aufwand und eingeschränkter Nachvollziehbarkeit führen. Die abgeleiteten funktionalen und nichtfunktionalen Anforderungen bilden die Grundlage für die Konzeption und Implementierung des Monitoring-Systems.
+
+Der Vergleich mit bestehenden Monitoring-Lösungen hat verdeutlicht, dass Prometheus, Grafana und Alertmanager eine geeignete Basis für Speicherung, Visualisierung und Alerting bieten, jedoch keine integrierte Incident-Historie und keine umfassende REST-Schnittstelle bieten. Kommerzielle Lösungen wie Nagios oder Zabbix sind für leichtgewichtige Szenarien überdimensioniert und erfordern erheblichen Konfigurationsaufwand.
+
+Die identifizierte Lücke zwischen Anforderungen und bestehenden Lösungen begründet die Notwendigkeit der entwickelten Lösung. Durch die Kombination aus Spring-Boot-basierter Prüfkomponente, Prometheus, Grafana, Alertmanager und einer eigenen Incident-Historie entsteht eine modulare, containerisierte und gut nachvollziehbare Monitoring-Architektur, die sich gezielt auf die Anforderungen der Arbeit konzentriert und bestehende Lücken schließt.
